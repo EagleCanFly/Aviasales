@@ -3,7 +3,7 @@ const
     formSearch = document.querySelector('.form-search'),
     fromCity = document.querySelector('.input__cities-from'),
     toCity = document.querySelector('.input__cities-to'),
-    departDate = document.querySelector('.date-depart'),
+    departDate = document.querySelector('.input__date-depart'),
     dropdownCitiesTo = document.querySelector('.dropdown__cities-to'),
     dropdownCitiesFrom = document.querySelector('.dropdown__cities-from');
 
@@ -59,6 +59,25 @@ const selectCity = (event, input, list) => {
     list.textContent = '';
 };
 
+const renderCheapDay = (cheapTicket) => {
+    console.log(cheapTicket);
+};
+
+const renderCheapYear = (cheapTickets) => {
+    console.log(cheapTickets);
+};
+
+const renderCheap = (data, date) => {
+    const cheapTicketYear = JSON.parse(data).best_prices;
+
+
+    const cheapTicketDay = cheapTicketYear.filter((item) => {
+        return date === item.depart_date;
+    });
+
+    renderCheapDay(cheapTicketDay);
+    renderCheapYear(cheapTicketYear)
+};
 // события
 
 fromCity.addEventListener('input', () => {
@@ -77,6 +96,32 @@ dropdownCitiesTo.addEventListener('click', () => {
     selectCity(event, toCity, dropdownCitiesTo);
 });
 
+formSearch.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const fromCityObj = cities.find((item) => {
+        return fromCity.value === item.name;
+    });
+    const toCityObj = cities.find((item) => {
+        return toCity.value === item.name;
+    });
+
+    const formData = {
+        from: fromCityObj.code,
+        to: toCityObj.code,
+        when: departDate.value,
+    };
+
+    const requestData = '?depart_date=' + formData.when +
+        '&origin=' + formData.from +
+        '&destination=' + formData.to +
+        '&one_way=true';
+
+    getData(calendar + requestData, (response) => {
+        renderCheap(response, formData.when);
+    });
+});
+
 // вызовы функций
 
 getData(citiesApi, (data) => {
@@ -84,12 +129,3 @@ getData(citiesApi, (data) => {
         return item.name;
     });
 });
-
-// getData(proxy + calendar + , (data) => {
-//     const price = JSON.parse(data).filter((item) => {
-
-//         if (item.depart_date === '2020-05-25') return item.value;
-//     })
-//     console.log(price);
-
-// });
