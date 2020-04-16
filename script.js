@@ -15,12 +15,12 @@ let cities = [];
 const citiesApi = 'data/cities.json';
 const proxy = 'https://cors-anywhere.herokuapp.com/';
 const apiToken = 'dee0597eea4716ca6387449d6e7d5e7d';
-const calendar = 'http://min-prices.aviasales.ru/calendar_preload',
+const calendar = 'https://min-prices.aviasales.ru/calendar_preload',
 MAX_COUNT = 10;
 
 // функции
 
-const getData = (url, callback) => {
+const getData = (url, callback, reject = console.error) => {
     const request = new XMLHttpRequest();
 
     request.open('GET', url);
@@ -31,7 +31,7 @@ const getData = (url, callback) => {
         if (request.status === 200) {
             callback(request.response);
         } else {
-            console.error(request.status);
+           reject(request.status);
         }
     });
 
